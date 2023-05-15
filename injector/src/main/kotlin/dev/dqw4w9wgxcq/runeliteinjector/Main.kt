@@ -1,5 +1,6 @@
 package dev.dqw4w9wgxcq.runeliteinjector
 
+import dev.dqw4w9wgxcq.runeliteinjector.injectors.FakeClick
 import dev.dqw4w9wgxcq.runeliteinjector.injectors.PrintDoAction
 import dev.dqw4w9wgxcq.runeliteinjector.injectors.PrintMousePacket
 import org.objectweb.asm.ClassReader
@@ -67,11 +68,11 @@ object Main {
             output.write(bytes)
         }
 
-        val transformers = listOf(
+        val injectors = listOf(
             PrintDoAction(),
 //            FakeMenu(),
             PrintMousePacket(),
-//            FakeClick(),
+            FakeClick(),
 //            DisableInput(),
 //            ShuffleMembers(),
         )
@@ -79,15 +80,19 @@ object Main {
         for (entry in runeliteJar.entries()) {
             val ins = runeliteJar.getInputStream(entry)
             val bytes = if (entry.name.endsWith(".class")) {
-                val cr = ClassReader(ins)
-                val cn = ClassNode()
-                cr.accept(cn, 0)
+                var classBytes = ins.readAllBytes()!!
+                for (injector in injectors) {
+                    val cr = ClassReader(classBytes)
+                    val cn = ClassNode()
+                    cr.accept(cn, 0)
 
-                transformers.forEach { it.apply(cn) }
+                    injector.apply(cn)
 
-                val cw = LoadingClassWriter(classLoader, ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES)
-                cn.accept(cw)
-                cw.toByteArray()
+                    val cw = LoadingClassWriter(classLoader, ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES)
+                    cn.accept(cw)
+                    classBytes = cw.toByteArray()
+                }
+                classBytes
             } else {
                 runeliteJar.getInputStream(entry).readAllBytes()
             }!!
