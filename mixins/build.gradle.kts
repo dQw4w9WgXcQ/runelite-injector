@@ -22,7 +22,7 @@ java {
 }
 
 dependencies {
-    val runeliteVersion = "1.9.15.3"
+    val runeliteVersion = "1.10.0.2"
     compileOnly("net.runelite:runelite-api:$runeliteVersion")
     implementation(files("libs/allatori-annotations.jar"))
 }

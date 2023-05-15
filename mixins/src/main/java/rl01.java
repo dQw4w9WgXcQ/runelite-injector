@@ -8,15 +8,22 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Paths;
 
 @DoNotRename
-public class rl10 {
+public class rl01 {
+    //tag
     @DoNotRename
-    public static long tag = -1;
+    public static long fet = -1;
+    //widget
     @DoNotRename
-    public static Widget widget = null;
+    public static Widget fww = null;
+    //disableInput
     @DoNotRename
-    public static boolean fakeClick = false;
+    public static volatile boolean dii = false;
+
+    static File file = Paths.get(System.getProperty("user.home"), "NovaLite", "mouse_recorder" + System.currentTimeMillis() + ".txt").toFile();
+    static BufferedWriter writer;
 
     static Class<?> my;
     static Class<?> ix;
@@ -28,8 +35,11 @@ public class rl10 {
     static Field entityTags;
 
     static Method addSceneMenuOptions;
-    static Method addCancelMenuEntry;
+    static Method addCancelMenuEntry;//should be named resetMenu
     static Method addWidgetMenuOptions;
+
+    @DoNotRename
+    static int lbb = -1;
 
     static {
         try {
@@ -49,70 +59,7 @@ public class rl10 {
         } catch (ClassNotFoundException | NoSuchFieldException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
-    }
 
-    @DoNotRename
-    static void zz() {
-        try {
-            long tag = rl10.tag;
-
-            if (tag == -1) {
-                return;
-            }
-
-            entityCount.set(null, -429048361);
-            long[] entityTags = (long[]) rl10.entityTags.get(null);
-            entityTags[0] = tag;
-            addCancelMenuEntry.invoke(null, -742935767);
-            addSceneMenuOptions.invoke(null, 11, 0, 0, 0, -1708655552);
-        } catch (Exception e) {
-            System.out.println(e.getClass().getSimpleName() + " " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    @DoNotRename
-    static void yy() {
-        try {
-            Widget widget = rl10.widget;
-
-            if (widget == null) {
-                return;
-            }
-
-            System.out.println("widget " + widget.getId());
-
-            addWidgetMenuOptions.invoke(null, widget, -478627331);
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            System.out.println(e.getClass().getSimpleName() + " " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    static boolean weed = false;
-    static int x = 42069;
-    static int y = 42069;
-
-    @DoNotRename
-    static void print(int i) {
-        if (weed) {
-            y = i;
-        } else {
-            x = i;
-        }
-
-        weed = !weed;
-    }
-
-    @DoNotRename
-    static void print(long l) {
-        System.out.println("x: " + x + " y: " + y + " t: " + l);
-    }
-
-    static File file = new File(System.getProperty("user.home"), "mouse.txt");
-    static BufferedWriter writer;
-
-    static {
         if (!file.exists()) {
             try {
                 file.createNewFile();
@@ -129,9 +76,75 @@ public class rl10 {
     }
 
     @DoNotRename
-    static void printMouseRecorderSend(int var6, int var13, int var11, int var12) {
+    static void mmm() {
         try {
-            writer.write("move," + var13 + "," + var11 + "," + var12 + "," + var6);
+            long tag = rl01.fet;
+
+            if (tag == -1) {
+                return;
+            }
+
+            entityCount.set(null, -429048361);
+            long[] entityTags = (long[]) rl01.entityTags.get(null);
+            entityTags[0] = tag;
+            addCancelMenuEntry.invoke(null, -742935767);
+            addSceneMenuOptions.invoke(null, 11, 0, 0, 0, -1708655552);
+        } catch (Exception e) {
+            System.out.println(e.getClass().getSimpleName() + " " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @DoNotRename
+    static void www() {
+        try {
+            Widget widget = rl01.fww;
+
+            if (widget == null) {
+                return;
+            }
+
+            System.out.println("widget " + widget.getId());
+
+            addWidgetMenuOptions.invoke(null, widget, -478627331);
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            System.out.println(e.getClass().getSimpleName() + " " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    //mouseClickPacket
+    @DoNotRename
+    static void mcp(int dt, int x, int y) {
+        try {
+            System.out.println("click," + lbb + "," + dt + "," + x + "," + y);
+            writer.write("click," + lbb + "," + dt + "," + x + "," + y);
+            writer.newLine();
+            writer.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        lbb = -1;
+    }
+
+    //mouseRecorderWrite
+    @DoNotRename
+    static void mrw(int dt, int dx, int dy, int dtRemAccumualtion) {
+        try {
+            System.out.println("move," + dt + "," + dx + "," + dy + "," + dtRemAccumualtion);
+            writer.write("move," + dt + "," + dx + "," + dy + "," + dtRemAccumualtion);
+            writer.newLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //mouseRecorderSend
+    @DoNotRename
+    static void mrs() {
+        try {
+            System.out.println("packet");
+            writer.write("packet");
             writer.newLine();
             writer.flush();
         } catch (IOException e) {
@@ -139,27 +152,29 @@ public class rl10 {
         }
     }
 
-    static int button = -1;
-
+    //button1
     @DoNotRename
-    static void printMouseClickSend(int dt, int x, int y) {
-        try {
-            writer.write("click," + button + "," + dt + "," + x + "," + y);
-            writer.newLine();
-            writer.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        button = -1;
+    static void bb1() {
+        lbb = 1;
     }
 
+    //button0
     @DoNotRename
-    static void button1() {
-        button = 1;
+    static void bb0() {
+        lbb = 0;
     }
 
+    //fakeMouseRecorder
     @DoNotRename
-    static void button0() {
-        button = 0;
+    static boolean fmr() {
+        System.out.println("fakeMouseRecorder");
+        return false;
+    }
+
+    //fakeMouseClick
+    @DoNotRename
+    static boolean fmc() {
+        System.out.println("fakeMouseClick");
+        return false;
     }
 }

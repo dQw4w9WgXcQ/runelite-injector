@@ -26,3 +26,11 @@ fun MethodNode.toString2(): String {
     printer.getText().clear()
     return sw.toString().trimIndent()
 }
+
+fun <T> Iterator<T>.next(predicate: (T) -> Boolean): T {
+    while (hasNext()) {
+        val next = next()
+        if (predicate(next)) return next
+    }
+    throw NoSuchElementException()
+}

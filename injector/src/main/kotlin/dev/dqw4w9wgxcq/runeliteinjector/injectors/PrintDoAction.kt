@@ -1,19 +1,20 @@
-package dev.dqw4w9wgxcq.runeliteinjector.transformers
+package dev.dqw4w9wgxcq.runeliteinjector.injectors
 
-import dev.dqw4w9wgxcq.runeliteinjector.Transformer
+import dev.dqw4w9wgxcq.runeliteinjector.Hooks
+import dev.dqw4w9wgxcq.runeliteinjector.Injector
 import org.objectweb.asm.Opcodes.*
 import org.objectweb.asm.tree.*
+import org.slf4j.LoggerFactory
 
-class PrintDoAction : Transformer {
-    private val doActionClassName = "ar"
-    private val doActionMethodName = "ke"
+class PrintDoAction : Injector {
+    private val log = LoggerFactory.getLogger(this::class.java)
 
     override fun apply(clazz: ClassNode) {
-        if (clazz.name != doActionClassName) {
+        if (clazz.name != Hooks.get("doActionClassName")) {
             return
         }
 
-        val doAction = clazz.methods.first { it.name == doActionMethodName }
+        val doAction = clazz.methods.first { it.name == Hooks.get("doActionMethodName") }
 
         println("found doAction ${clazz.name} ${doAction.name}")
 

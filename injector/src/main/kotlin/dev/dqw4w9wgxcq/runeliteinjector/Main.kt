@@ -1,12 +1,11 @@
 package dev.dqw4w9wgxcq.runeliteinjector
 
-import dev.dqw4w9wgxcq.runeliteinjector.transformers.FakeMenu
-import dev.dqw4w9wgxcq.runeliteinjector.transformers.PrintDoAction
-import dev.dqw4w9wgxcq.runeliteinjector.transformers.PrintMouseRecorder
-import dev.dqw4w9wgxcq.runeliteinjector.transformers.PrintMouseRecorderSend
+import dev.dqw4w9wgxcq.runeliteinjector.injectors.PrintDoAction
+import dev.dqw4w9wgxcq.runeliteinjector.injectors.PrintMousePacket
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.tree.ClassNode
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.net.URLClassLoader
 import java.nio.file.Path
@@ -15,9 +14,11 @@ import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
 
 object Main {
+    private val log = LoggerFactory.getLogger(Main::class.java)
+
     @JvmStatic
     fun main(args: Array<String>) {
-        println(System.getProperty("user.dir"))
+        log.info(System.getProperty("user.dir"))
         val patched = Path.of(System.getProperty("user.home"), ".runelite", "cache", "patched.cache").toFile()
         if (!patched.exists()) throw Exception("patched.cache not found")
 
@@ -25,7 +26,7 @@ object Main {
             System.getProperty("user.home"),
             ".runelite",
             "repository2",
-            "runelite-api-1.9.15.3-runtime.jar"
+            "runelite-api-1.10.0.2-runtime.jar"
         ).toFile()
         if (!runeliteApi.exists()) throw Exception("runelite-api not found")
 
@@ -37,7 +38,7 @@ object Main {
 
         val outFile = Path.of(System.getProperty("user.home"), "NovaLite", "cache", "patched.cache").toFile()
         if (outFile.exists()) {
-            println("Deleting old patched.cache")
+            log.info("Deleting old patched.cache")
             outFile.delete()
         }
 
@@ -68,11 +69,11 @@ object Main {
 
         val transformers = listOf(
             PrintDoAction(),
-            FakeMenu(),
-//            ShuffleMembers(),
-//            PrintMouseRecorder(),
-            PrintMouseRecorderSend(),
+//            FakeMenu(),
+            PrintMousePacket(),
 //            FakeClick(),
+//            DisableInput(),
+//            ShuffleMembers(),
         )
 
         for (entry in runeliteJar.entries()) {
