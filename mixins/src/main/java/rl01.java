@@ -62,6 +62,7 @@ public class rl01 {
 
         if (!file.exists()) {
             try {
+                //noinspection ResultOfMethodCallIgnored
                 file.createNewFile();
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -167,14 +168,34 @@ public class rl01 {
     //fakeMouseRecorder
     @DoNotRename
     static boolean fmr() {
-        System.out.println("fakeMouseRecorder");
         return false;
     }
 
     //fakeMouseClick
+    //need to set MouseHandler_lastPressedTimeMillis
     @DoNotRename
     static boolean fmc() {
-        System.out.println("fakeMouseClick");
         return false;
+    }
+
+    //getFakeX
+    @DoNotRename
+    static int gfx(int x) {
+        System.out.println("getFakeX " + x);
+        return x;
+    }
+
+    //getFakeY
+    @DoNotRename
+    static int gfy(int y) {
+        System.out.println("getFakeY " + y);
+        return y;
+    }
+
+    //getFakeButton
+    @DoNotRename
+    static int gfb(int button) {
+        System.out.println("getFakeButton " + button);
+        return button;
     }
 }

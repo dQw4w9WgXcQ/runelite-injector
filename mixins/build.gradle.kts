@@ -1,18 +1,13 @@
-plugins {
-    id("java")
-}
+plugins { id("java") }
 
 group = "dev.dqw4w9wgxcq"
+
 version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    maven {
-        url = uri("https://repo.runelite.net")
-    }
-    flatDir {
-        dirs("libs")
-    }
+    maven { url = uri("https://repo.runelite.net") }
+    flatDir { dirs("libs") }
 }
 
 java {
@@ -22,8 +17,8 @@ java {
 }
 
 dependencies {
-    val runeliteVersion = "1.10.0.2"
-    compileOnly("net.runelite:runelite-api:$runeliteVersion")
+    val rlVersion = "1.10.8.2"
+    compileOnly("net.runelite:runelite-api:$rlVersion")
     implementation(files("libs/allatori-annotations.jar"))
 }
 

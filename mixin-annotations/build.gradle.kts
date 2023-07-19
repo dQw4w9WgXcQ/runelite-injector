@@ -1,13 +1,10 @@
-plugins {
-    id("java")
-}
+plugins { id("java") }
 
 group = "dev.dqw4w9wgxcq"
+
 version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-}
+repositories { mavenCentral() }
 
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
@@ -15,7 +12,4 @@ dependencies {
 }
 
 tasks {
-    test {
-        useJUnitPlatform()
-    }
 }
