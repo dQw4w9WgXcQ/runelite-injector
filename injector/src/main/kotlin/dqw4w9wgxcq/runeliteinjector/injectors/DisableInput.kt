@@ -20,19 +20,19 @@ class DisableInput : Injector {
         var didInject = false
 
         for (method in clazz.methods) {
-            if (method.name == "mouseClicked" ||
-                method.name == "mousePressed" ||
-                method.name == "mouseReleased" ||
-                method.name == "mouseEntered" ||
-                method.name == "mouseExited" ||
-                method.name == "mouseDragged" ||
-                method.name == "mouseMoved" ||
-                method.name == "focusGained" ||
-                method.name == "focusLost" ||
-                method.name == "mouseWheelMoved" ||
-                method.name == "keyTyped" ||
-                method.name == "keyPressed" ||
-                method.name == "keyReleased"
+            if (method.name == "mouseClicked"
+                || method.name == "mousePressed"
+                || method.name == "mouseReleased"
+                || method.name == "mouseEntered"
+                || method.name == "mouseExited"
+                || method.name == "mouseDragged"
+                || method.name == "mouseMoved"
+                || method.name == "focusGained"
+                || method.name == "focusLost"
+                || method.name == "mouseWheelMoved"
+                || method.name == "keyTyped"
+                || method.name == "keyPressed"
+                || method.name == "keyReleased"
             ) {
                 log.debug("Found method ${method.name} in class ${clazz.name}")
                 didInject = true

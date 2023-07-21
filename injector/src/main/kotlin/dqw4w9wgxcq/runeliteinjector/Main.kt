@@ -18,7 +18,7 @@ import java.util.jar.JarOutputStream
 object Main {
     private val log = LoggerFactory.getLogger(this::class.java)
 
-    private const val rlVersion = "1.10.8.2"
+    private val rlVersion = System.getenv("RL_VERSION")!!
 
     @JvmStatic
     fun main(args: Array<String>) {

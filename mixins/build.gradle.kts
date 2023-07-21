@@ -3,13 +3,13 @@ plugins {
 }
 
 dependencies {
-    val rlVersion = "1.10.8.2"
-    compileOnly("net.runelite:runelite-api:$rlVersion")
+    compileOnly("net.runelite:runelite-api:${Versions.runelite}")
     implementation(files("libs/allatori-annotations.jar"))
 }
 
 java {
     disableAutoTargetJvm()
+    sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 

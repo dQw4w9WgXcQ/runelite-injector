@@ -42,16 +42,14 @@ class PrintMousePacket : Injector {
 
         itr.next { it.opcode == Opcodes.MONITORENTER }
 
-        val putStatic = itr.next { it.opcode == Opcodes.PUTSTATIC && (it as FieldInsnNode).name == "ef" }
+        val insertBefore = itr.next { it.opcode == Opcodes.PUTSTATIC && (it as FieldInsnNode).name == "ef" }.next
 
-        val insertBefore = putStatic.next
-
-        val insert = InsnList()
-        insert.add(VarInsnNode(Opcodes.ILOAD, 13))//dt
-        insert.add(VarInsnNode(Opcodes.ILOAD, 11))//dx
-        insert.add(VarInsnNode(Opcodes.ILOAD, 12))//dy
-        insert.add(VarInsnNode(Opcodes.ILOAD, 6))//dtRemAccumulation
-        insert.add(
+        val insns = InsnList()
+        insns.add(VarInsnNode(Opcodes.ILOAD, 13))//dt
+        insns.add(VarInsnNode(Opcodes.ILOAD, 11))//dx
+        insns.add(VarInsnNode(Opcodes.ILOAD, 12))//dy
+        insns.add(VarInsnNode(Opcodes.ILOAD, 6))//dtRemAccumulation
+        insns.add(
             MethodInsnNode(
                 Opcodes.INVOKESTATIC,
                 MixinHooks.get("Mixins"),
@@ -60,7 +58,7 @@ class PrintMousePacket : Injector {
                 false
             )
         )
-        doCycleLoggedIn.instructions.insertBefore(insertBefore, insert)
+        doCycleLoggedIn.instructions.insertBefore(insertBefore, insns)
     }
 
     private fun injectMouseRecorderSend(doCycleLoggedIn: MethodNode) {

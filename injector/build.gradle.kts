@@ -21,6 +21,8 @@ tasks {
     register<JavaExec>("inject") {
         dependsOn(":mixins:jar")
 
+        environment("RL_VERSION", Versions.runelite)
+
         classpath(sourceSets["main"].runtimeClasspath)
         mainClass.set("dqw4w9wgxcq.runeliteinjector.Main")
     }
