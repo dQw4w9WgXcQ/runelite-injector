@@ -1,8 +1,19 @@
 package dqw4w9wgxcq.runeliteinjector.injectors
 
-import dqw4w9wgxcq.runeliteinjector.*
+import dqw4w9wgxcq.runeliteinjector.Hooks
+import dqw4w9wgxcq.runeliteinjector.Injector
+import dqw4w9wgxcq.runeliteinjector.MixinHooks
+import dqw4w9wgxcq.runeliteinjector.next
+import dqw4w9wgxcq.runeliteinjector.toString2
 import org.objectweb.asm.Opcodes
-import org.objectweb.asm.tree.*
+import org.objectweb.asm.tree.ClassNode
+import org.objectweb.asm.tree.FieldInsnNode
+import org.objectweb.asm.tree.InsnList
+import org.objectweb.asm.tree.IntInsnNode
+import org.objectweb.asm.tree.LdcInsnNode
+import org.objectweb.asm.tree.MethodInsnNode
+import org.objectweb.asm.tree.MethodNode
+import org.objectweb.asm.tree.VarInsnNode
 import org.slf4j.LoggerFactory
 
 class PrintMousePacket : Injector {
@@ -14,8 +25,7 @@ class PrintMousePacket : Injector {
     override fun inject(clazz: ClassNode): Boolean {
         if (clazz.name != doCycleLoggedInHook.owner) return false
 
-        val doCycleLoggedIn =
-            clazz.methods.first { it.name == doCycleLoggedInHook.name && it.desc.contains("B)V") }
+        val doCycleLoggedIn = clazz.methods.first { it.name == doCycleLoggedInHook.name && it.desc.contains("B)V") }
 
         doCycleLoggedIn.toString2()
 
@@ -32,16 +42,15 @@ class PrintMousePacket : Injector {
 
         itr.next { it.opcode == Opcodes.MONITORENTER }
 
-        val putStatic =
-            itr.next { it.opcode == Opcodes.PUTSTATIC && (it as FieldInsnNode).name == "ef" }
+        val putStatic = itr.next { it.opcode == Opcodes.PUTSTATIC && (it as FieldInsnNode).name == "ef" }
 
         val insertBefore = putStatic.next
 
         val insert = InsnList()
-        insert.add(VarInsnNode(Opcodes.ILOAD, 13)) // dt
-        insert.add(VarInsnNode(Opcodes.ILOAD, 11)) // dx
-        insert.add(VarInsnNode(Opcodes.ILOAD, 12)) // dy
-        insert.add(VarInsnNode(Opcodes.ILOAD, 6)) // dtRemAccumulation
+        insert.add(VarInsnNode(Opcodes.ILOAD, 13))//dt
+        insert.add(VarInsnNode(Opcodes.ILOAD, 11))//dx
+        insert.add(VarInsnNode(Opcodes.ILOAD, 12))//dy
+        insert.add(VarInsnNode(Opcodes.ILOAD, 6))//dtRemAccumulation
         insert.add(
             MethodInsnNode(
                 Opcodes.INVOKESTATIC,
@@ -121,9 +130,9 @@ class PrintMousePacket : Injector {
         itr.next { it.opcode == Opcodes.BIPUSH && it is IntInsnNode && it.operand == -34 }
 
         val insert = InsnList()
-        insert.add(VarInsnNode(Opcodes.ILOAD, 6)) // dt
-        insert.add(VarInsnNode(Opcodes.ILOAD, 5)) // x
-        insert.add(VarInsnNode(Opcodes.ILOAD, 4)) // y
+        insert.add(VarInsnNode(Opcodes.ILOAD, 6))//dt
+        insert.add(VarInsnNode(Opcodes.ILOAD, 5))//x
+        insert.add(VarInsnNode(Opcodes.ILOAD, 4))//y
         insert.add(
             MethodInsnNode(
                 Opcodes.INVOKESTATIC,

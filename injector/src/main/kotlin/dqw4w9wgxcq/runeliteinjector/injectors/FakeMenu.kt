@@ -19,6 +19,7 @@ class FakeMenu : Injector {
 
         val invokeUpdateRootInterface = doCycleLoggedIn.instructions.first {
             it as MethodInsnNode
+
             it.opcode == Opcodes.INVOKESTATIC
                     && it.name == Hooks.getMethod("updateRootInterface").name
                     && it.owner == Hooks.getMethod("updateRootInterfaceClass").name

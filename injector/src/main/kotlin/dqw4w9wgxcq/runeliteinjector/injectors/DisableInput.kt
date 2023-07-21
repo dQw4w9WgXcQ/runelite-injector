@@ -3,7 +3,12 @@ package dqw4w9wgxcq.runeliteinjector.injectors
 import dqw4w9wgxcq.runeliteinjector.Injector
 import dqw4w9wgxcq.runeliteinjector.MixinHooks
 import org.objectweb.asm.Opcodes
-import org.objectweb.asm.tree.*
+import org.objectweb.asm.tree.ClassNode
+import org.objectweb.asm.tree.FieldInsnNode
+import org.objectweb.asm.tree.InsnList
+import org.objectweb.asm.tree.InsnNode
+import org.objectweb.asm.tree.JumpInsnNode
+import org.objectweb.asm.tree.LabelNode
 import org.slf4j.LoggerFactory
 
 class DisableInput : Injector {
@@ -12,7 +17,7 @@ class DisableInput : Injector {
     override fun inject(clazz: ClassNode): Boolean {
         if (clazz.name.length != 2) return false
 
-        var injected = false
+        var didInject = false
 
         for (method in clazz.methods) {
             if (method.name == "mouseClicked" ||
@@ -30,7 +35,7 @@ class DisableInput : Injector {
                 method.name == "keyReleased"
             ) {
                 log.debug("Found method ${method.name} in class ${clazz.name}")
-                injected = true
+                didInject = true
 
                 val label = LabelNode()
                 val insnList = InsnList()
@@ -50,6 +55,6 @@ class DisableInput : Injector {
             }
         }
 
-        return injected
+        return didInject
     }
 }

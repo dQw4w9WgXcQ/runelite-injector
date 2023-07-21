@@ -1,12 +1,5 @@
-plugins { kotlin("jvm") version "1.9.0" }
-
-group = "dev.dqw4w9wgxcq"
-
-version = "1.0-SNAPSHOT"
-
-repositories {
-    mavenCentral()
-    maven { url = uri("https://repo.runelite.net") }
+plugins {
+    kotlin("jvm") version "1.9.0"
 }
 
 dependencies {
@@ -19,14 +12,16 @@ dependencies {
     implementation(group = "com.google.code.gson", name = "gson", version = "2.8.6")
 }
 
-kotlin { jvmToolchain(11) }
+//i forget if this is necessary, but might be needed so the jdk classes loaded for COMPUTE_FRAMES is consistent
+kotlin {
+    jvmToolchain(11)
+}
 
 tasks {
-    test { useJUnitPlatform() }
-
     register<JavaExec>("inject") {
+        dependsOn(":mixins:jar")
+
         classpath(sourceSets["main"].runtimeClasspath)
         mainClass.set("dqw4w9wgxcq.runeliteinjector.Main")
-        dependsOn(":mixins:jar")
     }
 }

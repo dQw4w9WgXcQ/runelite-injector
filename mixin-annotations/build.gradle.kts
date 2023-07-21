@@ -1,14 +1,8 @@
-plugins { id("java") }
-
-group = "dev.dqw4w9wgxcq"
-
-version = "1.0-SNAPSHOT"
-
-repositories { mavenCentral() }
+plugins {
+    id("java")
+}
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.9.1"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
 tasks {

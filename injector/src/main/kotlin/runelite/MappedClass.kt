@@ -12,7 +12,7 @@ data class MappedClass(
     val interfaces: List<String>,
     val fields: List<MappedField>,
     val methods: List<MappedMethod>,
-    val constructors: List<MappedMethod>
+    val constructors: List<MappedMethod>,
 ) {
     fun getMethod(name: String): MappedMethod {
         return methods.firstOrNull { it.method == name } ?: throw Exception("Method $name not found in class $`class`")
