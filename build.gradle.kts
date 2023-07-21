@@ -1,6 +1,6 @@
-subprojects {
+allprojects {
     group = "dev.dqw4w9wgxcq"
-    version = "1.0-SNAPSHOT"
+    version = "1.0.0"
 
     repositories {
         mavenCentral()

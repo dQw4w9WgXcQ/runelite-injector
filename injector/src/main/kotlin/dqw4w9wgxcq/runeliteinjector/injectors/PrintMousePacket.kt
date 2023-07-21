@@ -94,8 +94,8 @@ class PrintMousePacket : Injector {
         }
 
         val iconst1 = itr.next { it.opcode == Opcodes.ICONST_1 }
-        val invokeButton1 = InsnList()
-        invokeButton1.add(
+        val invokeButton1Insns = InsnList()
+        invokeButton1Insns.add(
             MethodInsnNode(
                 Opcodes.INVOKESTATIC,
                 MixinHooks.get("Mixins"),
@@ -104,11 +104,11 @@ class PrintMousePacket : Injector {
                 false
             )
         )
-        doCycleLoggedIn.instructions.insertBefore(iconst1, invokeButton1)
+        doCycleLoggedIn.instructions.insertBefore(iconst1, invokeButton1Insns)
 
         val iconst0 = itr.next { it.opcode == Opcodes.ICONST_0 }
-        val invokeButton0 = InsnList()
-        invokeButton0.add(
+        val invokeButton0Insns = InsnList()
+        invokeButton0Insns.add(
             MethodInsnNode(
                 Opcodes.INVOKESTATIC,
                 MixinHooks.get("Mixins"),
@@ -117,7 +117,7 @@ class PrintMousePacket : Injector {
                 false
             )
         )
-        doCycleLoggedIn.instructions.insertBefore(iconst0, invokeButton0)
+        doCycleLoggedIn.instructions.insertBefore(iconst0, invokeButton0Insns)
     }
 
     private fun injectMouseClickPacket(doCycleLoggedIn: MethodNode) {
@@ -127,11 +127,11 @@ class PrintMousePacket : Injector {
 
         itr.next { it.opcode == Opcodes.BIPUSH && it is IntInsnNode && it.operand == -34 }
 
-        val insert = InsnList()
-        insert.add(VarInsnNode(Opcodes.ILOAD, 6))//dt
-        insert.add(VarInsnNode(Opcodes.ILOAD, 5))//x
-        insert.add(VarInsnNode(Opcodes.ILOAD, 4))//y
-        insert.add(
+        val insns = InsnList()
+        insns.add(VarInsnNode(Opcodes.ILOAD, 6))//dt
+        insns.add(VarInsnNode(Opcodes.ILOAD, 5))//x
+        insns.add(VarInsnNode(Opcodes.ILOAD, 4))//y
+        insns.add(
             MethodInsnNode(
                 Opcodes.INVOKESTATIC,
                 MixinHooks.get("Mixins"),
@@ -142,10 +142,8 @@ class PrintMousePacket : Injector {
         )
 
         doCycleLoggedIn.instructions.insertBefore(
-            itr.next {
-                it.opcode == Opcodes.GETSTATIC && it is FieldInsnNode && it.name == packetWriterHook.name
-            },
-            insert
+            itr.next { it.opcode == Opcodes.GETSTATIC && it is FieldInsnNode && it.name == packetWriterHook.name },
+            insns
         )
     }
 }

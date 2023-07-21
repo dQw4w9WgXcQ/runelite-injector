@@ -19,6 +19,7 @@ object MixinHooks {
     )
 
     fun <T> get(name: String): T {
-        @Suppress("UNCHECKED_CAST") return mixinHooks[name] as T
+        @Suppress("UNCHECKED_CAST")
+        return mixinHooks[name] as T
     }
 }
