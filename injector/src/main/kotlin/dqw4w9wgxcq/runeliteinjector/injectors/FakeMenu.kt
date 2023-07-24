@@ -12,18 +12,19 @@ import org.slf4j.LoggerFactory
 class FakeMenu : Injector {
     private val log = LoggerFactory.getLogger(this::class.java)
 
+    private val doCycleLoggedInHook = Hooks.getMethod("doCycleLoggedIn")
+    private val updateRootInterfaceHook = Hooks.getMethod("updateRootInterface")
+
     override fun inject(clazz: ClassNode): Boolean {
         if (clazz.name != "client") return false
 
-        val doCycleLoggedIn = clazz.methods.first { it.name == MixinHooks.get("doCycleLoggedIn") }
+        val doCycleLoggedIn = clazz.methods.first { it.name == doCycleLoggedInHook.name }
 
         val invokeUpdateRootInterface = doCycleLoggedIn.instructions.first {
-            it as MethodInsnNode
-
             it.opcode == Opcodes.INVOKESTATIC
-                    && it.name == Hooks.getMethod("updateRootInterface").name
-                    && it.owner == Hooks.getMethod("updateRootInterfaceClass").name
-                    && it.desc == Hooks.getMethod("updateRootInterfaceDesc").name
+                    && (it as MethodInsnNode).name == updateRootInterfaceHook.name
+                    && it.owner == updateRootInterfaceHook.owner
+                    && it.desc == updateRootInterfaceHook.descriptor
         }
 
         val insnList = InsnList()

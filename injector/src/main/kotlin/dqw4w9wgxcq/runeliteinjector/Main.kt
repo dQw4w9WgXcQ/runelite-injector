@@ -18,10 +18,13 @@ import java.util.jar.JarOutputStream
 object Main {
     private val log = LoggerFactory.getLogger(this::class.java)
 
-    private val rlVersion = System.getenv("RL_VERSION") ?: throw Exception("env RL_VERSION not set")
+    private val projectVersion = System.getProperty("projectVersion") ?: throw Exception("projectVersion not set")
+    private val rlVersion = System.getProperty("rlVersion") ?: throw Exception("rlVersion not set")
 
     @JvmStatic
     fun main(args: Array<String>) {
+        log.info("projectVersion: $projectVersion rlVersion: $rlVersion")
+
         val patchedFile = Path.of(System.getProperty("user.home"), ".runelite", "cache", "patched.cache").toFile()
         if (!patchedFile.exists()) throw Exception("patched.cache not found")
 
@@ -34,8 +37,8 @@ object Main {
         if (!runeliteApiFile.exists()) throw Exception("runelite-api not found")
 
         val mixinsFile = File(
-            System.getProperty("user.home"),
-            "/projects/runelite-injector/mixins/build/libs/mixins-1.0-SNAPSHOT.jar"
+            File(System.getProperty("user.dir")).parentFile,
+            "mixins/build/libs/mixins-$projectVersion.jar"
         )
         if (!mixinsFile.exists()) throw Exception("mixins not found in ${mixinsFile.absolutePath}")
 
@@ -58,7 +61,7 @@ object Main {
             }
         }
 
-        val output = JarOutputStream(outFile.outputStream())
+        val out = JarOutputStream(outFile.outputStream())
 
         //add mixins
         val mixinsJar = JarFile(mixinsFile)
@@ -66,15 +69,15 @@ object Main {
             if (!entry.name.endsWith(".class")) continue
             val ins = mixinsJar.getInputStream(entry)
             val bytes = ins.readAllBytes()!!
-            output.putNextEntry(JarEntry(entry.name))
-            output.write(bytes)
+            out.putNextEntry(JarEntry(entry.name))
+            out.write(bytes)
         }
 
         val injectors = listOf(
-            PrintDoAction(),
-            FakeMenu(),
+//            PrintDoAction(),
+//            FakeMenu(),
             PrintMousePacket(),
-            FakeClick(),
+//            FakeClick(),
         )
 
         for (entry in runeliteJar.entries()) {
@@ -96,11 +99,11 @@ object Main {
                 }
             }
 
-            output.putNextEntry(JarEntry(entry.name))
-            output.write(bytes)
+            out.putNextEntry(JarEntry(entry.name))
+            out.write(bytes)
         }
 
         runeliteJar.close()
-        output.close()
+        out.close()
     }
 }

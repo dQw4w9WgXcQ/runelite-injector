@@ -4,6 +4,7 @@ import dqw4w9wgxcq.runeliteinjector.Hooks
 import dqw4w9wgxcq.runeliteinjector.Injector
 import dqw4w9wgxcq.runeliteinjector.MixinHooks
 import dqw4w9wgxcq.runeliteinjector.next
+import dqw4w9wgxcq.runeliteinjector.nextOrNull
 import dqw4w9wgxcq.runeliteinjector.toString2
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.tree.ClassNode
@@ -20,16 +21,17 @@ class PrintMousePacket : Injector {
     private val log = LoggerFactory.getLogger(this::class.java)
 
     private val doCycleLoggedInHook = Hooks.getMethod("doCycleLoggedIn")
-    private val packetWriterHook = Hooks.getField("packetWriter")
 
     override fun inject(clazz: ClassNode): Boolean {
         if (clazz.name != doCycleLoggedInHook.owner) return false
 
-        val doCycleLoggedIn = clazz.methods.first { it.name == doCycleLoggedInHook.name && it.desc.contains("B)V") }
+        val doCycleLoggedIn = clazz.methods
+            .first { it.name == doCycleLoggedInHook.name && it.desc == doCycleLoggedInHook.descriptor }
 
         doCycleLoggedIn.toString2()
 
         injectMouseRecorderWrite(doCycleLoggedIn)
+        throw Exception("test")
         injectMouseRecorderSend(doCycleLoggedIn)
         injectButton1Button0(doCycleLoggedIn)
         injectMouseClickPacket(doCycleLoggedIn)
@@ -37,18 +39,30 @@ class PrintMousePacket : Injector {
         return true
     }
 
+    private val lastMouseRecorderTimeFieldName = "eo"
     private fun injectMouseRecorderWrite(doCycleLoggedIn: MethodNode) {
         val itr = doCycleLoggedIn.instructions.iterator()
 
+        //https://i.imgur.com/Ghhs6uS.png
         itr.next { it.opcode == Opcodes.MONITORENTER }
+        itr.next { it.opcode == Opcodes.BIPUSH && (it as IntInsnNode).operand == 40 }
 
-        val insertBefore = itr.next { it.opcode == Opcodes.PUTSTATIC && (it as FieldInsnNode).name == "ef" }.next
+        val dtVarIdx =
+        val dxVarIdx =
+        val dyVarIdx =
+        val dtRemAccumulationVarIdx =
+
+        log.info("var indicies: dt=$dtVarIdx, dx=$dxVarIdx, dy=$dyVarIdx, dtRemAccumulation=$dtRemAccumulationVarIdx")
+
+        //https://i.imgur.com/ycwW64E.png
+        val insertAfter = itr
+            .next { it.opcode == Opcodes.PUTSTATIC && (it as FieldInsnNode).name == lastMouseRecorderTimeFieldName }
 
         val insns = InsnList()
-        insns.add(VarInsnNode(Opcodes.ILOAD, 13))//dt
-        insns.add(VarInsnNode(Opcodes.ILOAD, 11))//dx
-        insns.add(VarInsnNode(Opcodes.ILOAD, 12))//dy
-        insns.add(VarInsnNode(Opcodes.ILOAD, 6))//dtRemAccumulation
+        insns.add(VarInsnNode(Opcodes.ILOAD, dtVarIdx))
+        insns.add(VarInsnNode(Opcodes.ILOAD, dxVarIdx))
+        insns.add(VarInsnNode(Opcodes.ILOAD, dyVarIdx))
+        insns.add(VarInsnNode(Opcodes.ILOAD, dtRemAccumulationVarIdx))
         insns.add(
             MethodInsnNode(
                 Opcodes.INVOKESTATIC,
@@ -58,15 +72,15 @@ class PrintMousePacket : Injector {
                 false
             )
         )
-        doCycleLoggedIn.instructions.insertBefore(insertBefore, insns)
+        doCycleLoggedIn.instructions.insertBefore(insertAfter.next, insns)
     }
 
+    private val someMult = 2560228884295272563L
     private fun injectMouseRecorderSend(doCycleLoggedIn: MethodNode) {
         val itr = doCycleLoggedIn.instructions.iterator()
 
         itr.next { it.opcode == Opcodes.MONITORENTER }
-
-        itr.next { it.opcode == Opcodes.LDC && (it as LdcInsnNode).cst == 2560228884295272563L }
+        itr.next { it.opcode == Opcodes.LDC && (it as LdcInsnNode).cst == someMult }
 
         val returnInsn = itr.next { it.opcode == Opcodes.RETURN }
 
@@ -81,16 +95,17 @@ class PrintMousePacket : Injector {
         )
     }
 
+    private val someOwnerMi = "mi"
+    private val someNameAn = "an"
     private fun injectButton1Button0(doCycleLoggedIn: MethodNode) {
         val itr = doCycleLoggedIn.instructions.iterator()
 
         itr.next { it.opcode == Opcodes.MONITOREXIT }
 
         itr.next {
-            it.opcode == Opcodes.INVOKESTATIC &&
-                    it is MethodInsnNode &&
-                    it.owner == "mi" &&
-                    it.name == "an"
+            it.opcode == Opcodes.INVOKESTATIC
+                    && (it as MethodInsnNode).owner == someOwnerMi
+                    && it.name == someNameAn
         }
 
         val iconst1 = itr.next { it.opcode == Opcodes.ICONST_1 }
@@ -120,12 +135,13 @@ class PrintMousePacket : Injector {
         doCycleLoggedIn.instructions.insertBefore(iconst0, invokeButton0Insns)
     }
 
+    private val packetWriterHook = Hooks.getField("packetWriter")
     private fun injectMouseClickPacket(doCycleLoggedIn: MethodNode) {
         val itr = doCycleLoggedIn.instructions.iterator()
 
         itr.next { it.opcode == Opcodes.MONITOREXIT }
 
-        itr.next { it.opcode == Opcodes.BIPUSH && it is IntInsnNode && it.operand == -34 }
+        itr.next { it.opcode == Opcodes.BIPUSH && (it as IntInsnNode).operand == -34 }
 
         val insns = InsnList()
         insns.add(VarInsnNode(Opcodes.ILOAD, 6))//dt
@@ -142,7 +158,7 @@ class PrintMousePacket : Injector {
         )
 
         doCycleLoggedIn.instructions.insertBefore(
-            itr.next { it.opcode == Opcodes.GETSTATIC && it is FieldInsnNode && it.name == packetWriterHook.name },
+            itr.next { it.opcode == Opcodes.GETSTATIC && (it as FieldInsnNode).name == packetWriterHook.name },
             insns
         )
     }

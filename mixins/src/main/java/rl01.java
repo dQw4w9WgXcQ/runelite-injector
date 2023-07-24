@@ -22,7 +22,7 @@ public class rl01 {
     @DoNotRename
     public static volatile boolean dii = false;
 
-    static File file = Paths.get(System.getProperty("user.home"), "NovaLite", "mouse_recorder" + System.currentTimeMillis() + ".txt").toFile();
+    static File file = Paths.get(System.getProperty("user.home"), "NovaLite", "mouserecording" + System.currentTimeMillis() + ".txt").toFile();
     static BufferedWriter writer;
 
     static Class<?> my;

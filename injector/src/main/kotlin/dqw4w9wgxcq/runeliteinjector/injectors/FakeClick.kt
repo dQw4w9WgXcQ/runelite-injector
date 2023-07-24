@@ -22,9 +22,9 @@ class FakeClick : Injector {
     override fun inject(clazz: ClassNode): Boolean {
         if (clientHook.name != clazz.name) return false
 
-        val doCycleLoggedIn = clazz.methods.first {
-            it.name == doCycleLoggedInHook.owner && it.desc == doCycleLoggedInHook.descriptor
-        }
+        val doCycleLoggedIn = clazz.methods
+            .first { it.name == doCycleLoggedInHook.name && it.desc == doCycleLoggedInHook.descriptor }
+
         val itr = doCycleLoggedIn.instructions.iterator()
 
         //force mouse recorder packet send
